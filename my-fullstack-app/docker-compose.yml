@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  web:
+    image: rrkdocker16/my-ec2-app:latest
+    ports:
+      - "80:80"
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=mypassword
+
+volumes:
+  db-data:
