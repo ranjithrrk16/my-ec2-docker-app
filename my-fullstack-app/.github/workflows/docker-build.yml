@@ -24,17 +24,22 @@ jobs:
           push: true
           tags: rrkdocker16/my-ec2-app:latest
 
+# ... (keep your existing build-and-push job above)
+
   deploy:
-    needs: build-and-push
+    needs: build-and-push # Only run this if the build finishes successfully
     runs-on: ubuntu-latest
     steps:
-      - name: SSH into EC2 and Update
-        uses: appleboy/ssh-action@master
+      - name: SSH into EC2 and update
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # Navigate to the app folder
             cd my-fullstack-app
+            # Download the latest image GitHub just built
             docker-compose pull
+            # Restart the app with the new image
             docker-compose up -d
